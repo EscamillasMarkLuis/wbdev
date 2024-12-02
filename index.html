@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>Login and Sign Up Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background-color: #222;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #444;
+            border: 1px solid #555;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #bbb;
+            cursor: pointer;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #666;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .toggle-form {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .toggle-form a {
+            color: #bbb;
+            text-decoration: none;
+        }
+        .toggle-form a:hover {
+            color: #fff;
+        }
+        #signup-form {
+            display: none;
+        }
+        #signup-confirmation {
+            display: none;
+            text-align: center;
+            color: green;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 500px) {
+            .container {
+                padding: 15px;
+                max-width: 90%;
+            }
+            input[type="text"], input[type="password"] {
+                font-size: 14px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="signup-confirmation">
+        <h3>Sign Up Successful!</h3>
+        <p>You have successfully created an account. You can now log in.</p>
+        <button onclick="toggleForm()">Go to Login</button>
+    </div>
+
+    <div id="login-form">
+        <h2>Login</h2>
+        <div class="input-group">
+            <input type="text" id="loginUsername" placeholder="Username" required>
+        </div>
+        <div class="input-group">
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <i class="fa fa-eye-slash toggle-password" onclick="togglePassword('loginPassword', this)"></i>
+        </div>
+        <button type="button" onclick="login()">Login</button>
+        <div class="toggle-form">
+            <a href="javascript:void(0)" onclick="toggleForm()">Sign Up</a>
+        </div>
+    </div>
+
+    <div id="signup-form">
+        <h2>Sign Up</h2>
+        <div class="input-group">
+            <input type="text" id="signupUsername" placeholder="Username" required>
+        </div>
+        <div class="input-group">
+            <input type="password" id="signupPassword" placeholder="Password" required>
+            <i class="fa fa-eye-slash toggle-password" onclick="togglePassword('signupPassword', this)"></i>
+        </div>
+        <div class="input-group">
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+            <i class="fa fa-eye-slash toggle-password" onclick="togglePassword('confirmPassword', this)"></i>
+        </div>
+        <button type="button" onclick="signup()">Sign Up</button>
+        <div class="toggle-form">
+            <a href="javascript:void(0)" onclick="toggleForm()">Login</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Toggle between Login and Sign Up forms
+    function toggleForm() {
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const signupConfirmation = document.getElementById('signup-confirmation');
+
+        if (loginForm.style.display === "none") {
+            loginForm.style.display = "block";
+            signupForm.style.display = "none";
+            signupConfirmation.style.display = "none";
+        } else {
+            loginForm.style.display = "none";
+            signupForm.style.display = "block";
+        }
+    }
+
+    // Toggle password visibility
+    function togglePassword(fieldId, icon) {
+        const field = document.getElementById(fieldId);
+        const type = field.type === "password" ? "text" : "password";
+        field.type = type;
+
+        // Toggle icon class
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
+    }
+
+    // Dummy Signup and Login functions for demonstration
+    function signup() {
+        const username = document.getElementById('signupUsername').value;
+        const password = document.getElementById('signupPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (password !== confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        // Store user data in localStorage
+        localStorage.setItem(username, JSON.stringify({ password }));
+
+        // Show confirmation
+        document.getElementById('signup-form').style.display = "none";
+        document.getElementById('signup-confirmation').style.display = "block";
+    }
+
+    function login() {
+        const username = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
+
+        const storedUser = JSON.parse(localStorage.getItem(username));
+
+        if (!storedUser || storedUser.password !== password) {
+            alert("Invalid username or password.");
+        } else {
+            alert("Login successful!");
+        }
+        window.location.href ="homepage.html" // Replace with your target file name
+    }
+    
+</script>
+
+</body>
+</html>
